@@ -9,6 +9,7 @@ TagManager:
   - gtrigger
   - Collection
   - CameraController
+  - Enemy
   layers:
   - Default
   - TransparentFX
