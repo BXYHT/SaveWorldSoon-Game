@@ -9,8 +9,8 @@ public class PlayerStatus : MonoBehaviour
     public float currentHealth;
 
     [Header("…À∫¶")]
-    public int damage;
-    public int damageFactor;
+    public int damage = 1;
+    public int damageFactor = 1;
     private int baseDamageFactor;
 
     [Header("≥Â¥Ã")]

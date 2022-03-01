@@ -153,6 +153,7 @@ public class PlayerController : MonoBehaviour
         if (jumpPressed && isGround)
         {
             isJump = true;
+            
             rb.velocity = new Vector2(rb.velocity.x, jumpforce);
             anim.SetBool("jumping", true);
             jumpCount--;
@@ -206,9 +207,10 @@ public class PlayerController : MonoBehaviour
         {
             StartDashTimer -= Time.deltaTime;
 
-            if(StartDashTimer <= 0)
+            if (StartDashTimer <= 0)
                 playerStatus.isDashing = false;
             else
+                anim.SetTrigger("Dash");
                 rb.MovePosition(new Vector2(transform.position.x+transform.right.x * playerStatus.dashSpeed *Time.deltaTime,transform.position.y));
         }
 
