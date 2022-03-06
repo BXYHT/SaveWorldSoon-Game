@@ -230,4 +230,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void TakeDamage()
+    {
+
+    }
+
 }
