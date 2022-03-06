@@ -18,6 +18,7 @@ namespace Player
             anim = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
             colider2D = GetComponent<PolygonCollider2D>();
             playerStatus = GetComponent<PlayerStatus>();
+            //colider2D.enabled = false;
         }
 
         // Update is called once per frame
@@ -39,20 +40,19 @@ namespace Player
         IEnumerator StartAttack()
         {
             yield return new WaitForSeconds(startTime);
-            //colider2D.enabled = true;
+            colider2D.enabled = true;
             StartCoroutine(disableHitbox());
         }
         IEnumerator disableHitbox()
         {
             yield return new WaitForSeconds(time);
-            //colider2D.enabled = false;
+            colider2D.enabled = false;
         }
 
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("Enemy"))
             {
-                Debug.Log("attack");
                 other.GetComponent<Enemy>().TakeDamage(playerStatus.damage*playerStatus.damageFactor);
                 playerStatus.ResetDamageFactor();            
             }
