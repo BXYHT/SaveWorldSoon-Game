@@ -53,7 +53,7 @@ namespace Player
         {
             if (other.gameObject.CompareTag("Enemy"))
             {
-                other.GetComponent<Enemy>().TakeDamage(playerStatus.damage*playerStatus.damageFactor);
+                other.GetComponent<EnemyController>().TakeDamage(playerStatus.damage*playerStatus.damageFactor);
                 playerStatus.ResetDamageFactor();            
             }
         }

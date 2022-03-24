@@ -5,23 +5,35 @@ using Pathfinding;
 using System.Collections;
 
 public enum EnemyStates { Guard,Patrol,Chase,Dead}
+public enum EnemyType {Short,Far,Treat,Defend }
 public class EnemyController : MonoBehaviour
 {
     private EnemyStates enemyStates;
+    public EnemyType enemyType;
     public float speed;
     public float radius;
     public float waitTime;
     public Animator anim;
     public Transform[] movePos;
     public Transform playerTran;
+    public LayerMask layer;
 
     private int i = 0;
     private bool movingRight = true;
     private float wait;
 
+    public int health;
+    private int maxHealth;
+    public int damage;
+    public float treatTime;
+    private float currentTreatTime;
+    public float treatRadius;
+    private bool isTreat;
     // Start is called before the first frame update
     void Start()
     {
+        maxHealth = health;
+        isTreat = false;
         anim = GetComponent<Animator>();
         wait = waitTime;
     }
@@ -31,16 +43,65 @@ public class EnemyController : MonoBehaviour
     {
         foundPlayer();
         SwitchStates();
-        if (foundPlayer())
+        if (health <= 0)
         {
-            transform.position =
-    Vector2.MoveTowards(transform.position, playerTran.position, speed * Time.deltaTime);
-        }
-        else
-        {
-            Patrol();
+            Destroy(gameObject);
         }
 
+        SwitchEnemy();
+
+    }
+
+    private void SwitchEnemy()
+    {
+        //近战敌人追击
+        if (enemyType == EnemyType.Short)
+        {
+            if (foundPlayer())
+            {
+                transform.position = Vector2.MoveTowards(transform.position, playerTran.position, speed * Time.deltaTime);
+            }
+            else
+            {
+                Patrol();
+            }
+
+        }
+        //远程敌人
+        else if (enemyType == EnemyType.Far)
+        {
+            if (foundPlayer())
+            {
+                transform.position = Vector2.MoveTowards(transform.position, playerTran.position, speed * Time.deltaTime);
+            }
+            else
+            {
+                Patrol();
+            }
+        }
+        //治疗敌人
+        else if (enemyType == EnemyType.Treat)
+        {
+            Collider2D o = Physics2D.OverlapCircle(gameObject.transform.position, treatRadius, layer);
+            if (o.tag == "Enemy" && isTreat == false)
+            {
+
+                currentTreatTime = treatTime;
+                isTreat = true;
+            }
+            currentTreatTime -= Time.deltaTime;
+            if (currentTreatTime<0 && o.GetComponent<EnemyController>().health < o.GetComponent<EnemyController>().maxHealth && isTreat)
+            {
+                isTreat = false;
+                o.GetComponent<EnemyController>().TakeDamage(-2);
+            }
+
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
     }
 
     private void Patrol()
@@ -106,5 +167,23 @@ public class EnemyController : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+    bool foundEnemy()
+    {
+
+        Collider2D o = Physics2D.OverlapCircle(gameObject.transform.position, treatRadius, layer);
+        if (o.tag == "Enemy")
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(gameObject.transform.position, treatRadius);
     }
 }
